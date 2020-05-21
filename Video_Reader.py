@@ -14,7 +14,7 @@ c = 0
 while True:
     ret, frame = video.read()
     if ret:
-        timeF = 1  # 每一帧检测一次
+        timeF = 1  # detecting for one frame
         if c % timeF == 0:
             img = frame[..., ::-1]
             img = Image.fromarray(img)
