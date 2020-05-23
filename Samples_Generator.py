@@ -111,6 +111,7 @@ def generator(pics_size, stop_value, isLandmarks=False):
                                                   format(positive_count, 1, offset_x1, offset_y1, offset_x2, offset_y2))
                         positive_count += 1
                         positive_target.flush()
+                        positive_target.close()
 
                     elif 0.4 < iou < 0.65:  # 部分样本2
                         img_crop = img.crop(crop_box)
@@ -127,6 +128,7 @@ def generator(pics_size, stop_value, isLandmarks=False):
                                               format(part_count, 2, offset_x1, offset_y1, offset_x2, offset_y2))
                         part_count += 1
                         part_target.flush()
+                        part_target.close()
 
                     elif iou < 0.20:
                         img_crop = img.crop(crop_box)
@@ -140,7 +142,8 @@ def generator(pics_size, stop_value, isLandmarks=False):
                             negative_target.write("negative_samples\{0}.jpg {1} {2} {3} {4} {5}\n".
                                                   format(negative_count, 0, 0, 0, 0, 0))
                         negative_count += 1
-                        part_target.flush()
+                        negative_target.flush()
+                        negative_target.close()
 
                     cout = positive_count + negative_count + part_count
                     if cout % 100 == 0:
