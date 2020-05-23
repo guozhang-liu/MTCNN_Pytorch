@@ -13,6 +13,7 @@ import Models
 2.图片输出通过opencv
 """
 
+
 class Detector:
     PNet_path = r"./Weights/pnet.pth"
     RNet_path = r"./Weights/rnet.pth"
@@ -249,7 +250,7 @@ class Detector:
 if __name__ == "__main__":
     x = time.time()
     with torch.no_grad() as grad:
-        image_file = r"./Test_Pics/1.jpg"
+        image_file = r"./Test_Pics/7.jpg"
         detector = Detector()
         image = cv2.imread(image_file)
         img = image[..., ::-1]
@@ -257,27 +258,28 @@ if __name__ == "__main__":
         boxes = detector.detect(img)
 
         for box in boxes:
-            x1 = float(box[0])
-            y1 = float(box[1])
-            x2 = float(box[2])
-            y2 = float(box[3])
+            x1 = int(box[0])
+            y1 = int(box[1])
+            x2 = int(box[2])
+            y2 = int(box[3])
             cv2.rectangle(image, (x1, y1), (x2, y2), color=(0, 0, 255), thickness=3)
 
-            px1 = float(box[4])
-            py1 = float(box[5])
-            px2 = float(box[6])
-            py2 = float(box[7])
-            px3 = float(box[8])
-            py3 = float(box[9])
-            px4 = float(box[10])
-            py4 = float(box[11])
-            px5 = float(box[12])
-            py5 = float(box[13])
+            px1 = int(box[4])
+            py1 = int(box[5])
+            px2 = int(box[6])
+            py2 = int(box[7])
+            px3 = int(box[8])
+            py3 = int(box[9])
+            px4 = int(box[10])
+            py4 = int(box[11])
+            px5 = int(box[12])
+            py5 = int(box[13])
 
             for point in [(px1, py1), (px2, py2), (px3, py3), (px4, py4), (px5, py5)]:
+                # cv2.circle(image, point, radius=2, color=(0, 255, 255), thickness=2)
                 cv2.line(image, (point[0]-4, point[1]), (point[0]+4, point[1]), color=(0, 255, 255), thickness=2)
                 cv2.line(image, (point[0], point[1]-4), (point[0], point[1]+4), color=(0, 255, 255), thickness=2)
-
+        cv2.imwrite("./Output/7.jpg", image)
         y = time.time()
         print(y - x)
         cv2.namedWindow("img", cv2.WINDOW_NORMAL)

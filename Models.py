@@ -55,6 +55,7 @@ class RNet(nn.Module):
 
         return confidence_output, offset_output
 
+
 class ONet(nn.Module):
     def __init__(self):
         super(ONet, self).__init__()

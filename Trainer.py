@@ -3,16 +3,16 @@ from Sampling import DatasetFaces
 from torch.utils.data import DataLoader
 from torch.optim import Adam, SGD
 import torch.nn as nn
-import Nets as Nets
+import Models as Nets
 import matplotlib.pyplot as plt
 import os
 from tqdm.autonotebook import tqdm
 
 
 class Trainer:
-    def __init__(self, net, path, isLandmarks=False):
+    def __init__(self, net, path, batch_size, isLandmarks=False):
         self.landmarks = isLandmarks
-        self.batch_size = 512
+        self.batch_size = batch_size
         self.net = net().cuda() if torch.cuda.is_available() else net().cpu()
         self.dataset = DatasetFaces(path, self.landmarks)
         self.dataloader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
