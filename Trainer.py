@@ -3,7 +3,7 @@ from Sampling import DatasetFaces
 from torch.utils.data import DataLoader
 from torch.optim import Adam, SGD
 import torch.nn as nn
-import MTCNN_Version_2.Nets as Nets
+import Nets as Nets
 import matplotlib.pyplot as plt
 import os
 from tqdm.autonotebook import tqdm

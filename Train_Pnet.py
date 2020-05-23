@@ -1,9 +1,9 @@
-import MTCNN_Version_2.Nets as Nets
-import MTCNN_Version_2.Trainer as Trainer
+import Nets as Nets
+import Trainer as Trainer
 
 
 if __name__ == "__main__":
-    path = r"./"
+    path = r"D:\数据集\CelebaA\100k_version\12"
     net = Nets.PNet
     train = Trainer.Trainer(net, path)
     train.train("pnet", 0.01)

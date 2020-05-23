@@ -6,7 +6,7 @@ import numpy as np
 from Tools.utilis import NMS, Convert_to_square
 import PIL.ImageDraw as ImageDraw
 import cv2
-import Nets
+import Models
 
 """
 1.pnet的侦测通过切片形式完成，提高了p网络侦测效率
@@ -19,9 +19,9 @@ class Detector:
     ONet_path = r"./Weights/onet.pth"
 
     def __init__(self, P_path=PNet_path, R_path=RNet_path, O_path=ONet_path, isCUDA=True):
-        self.pnet = Nets.PNet()
-        self.rnet = Nets.RNet()
-        self.onet = Nets.ONet()
+        self.pnet = Models.PNet()
+        self.rnet = Models.RNet()
+        self.onet = Models.ONet()
         self.cuda = isCUDA
 
         if self.cuda:

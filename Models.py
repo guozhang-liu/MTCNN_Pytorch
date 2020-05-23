@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 
+
 class PNet(nn.Module):
     def __init__(self):
         super(PNet, self).__init__()

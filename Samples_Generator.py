@@ -1,4 +1,3 @@
-import torch
 import Tools.utilis as utilis
 import os
 import traceback
