@@ -54,6 +54,8 @@ def generator(pics_size, stop_value, isLandmarks=False):
             side_len = max(w, h)  # 样本框以原框最长边长缩放作为边长
             seed = float_num[np.random.randint(0, len(float_num))]  # 制作随机种子
             cout = 0
+            if side_len * seed == 0:
+                continue
             for _ in range(5):
                 _side_len = side_len + np.random.randint(int(-side_len * seed), int(side_len * seed))  # 边长伸缩
                 _center_x = center_axes[0] + np.random.randint(int(-center_axes[0] * seed),
@@ -76,7 +78,7 @@ def generator(pics_size, stop_value, isLandmarks=False):
                 offset_y2 = (y2 - _y2) / _side_len
 
                 # 计算五个特征点偏移率
-                offsets = landmarks(landmarks_path, _side_len, _x1, _y1, isLandmarks)
+                offsets = landmarks(landmarks_path, _side_len, _x1, _y1, i, landmarks=isLandmarks)
                 offset_px1 = offsets[0]
                 offset_py1 = offsets[1]
                 offset_px2 = offsets[2]
@@ -149,8 +151,8 @@ def generator(pics_size, stop_value, isLandmarks=False):
         traceback.print_exc()
 
 
-def landmarks(landmarks_path, _side_len, _x1, _y1, i, islandmarks=False):
-    if islandmarks:
+def landmarks(landmarks_path, _side_len, _x1, _y1, i, landmarks):
+    if landmarks:
         landmarks_line = open(landmarks_path)
         landmark = landmarks_line.readlines()[i]
         px1 = float(landmark.split()[1].strip())
@@ -181,6 +183,6 @@ def landmarks(landmarks_path, _side_len, _x1, _y1, i, islandmarks=False):
 
 
 if __name__ == "__main__":
-    generator(12, 100000)
+    # generator(12, 100000)
     # generator(24, 100000)
-    # generator(48, 100000, isLandmarks=True)
+    generator(48, 100000, isLandmarks=True)

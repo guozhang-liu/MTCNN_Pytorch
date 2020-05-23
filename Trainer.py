@@ -1,11 +1,12 @@
 import torch
-from MTCNN_Version_2.Sampling import DatasetFaces
+from Sampling import DatasetFaces
 from torch.utils.data import DataLoader
 from torch.optim import Adam, SGD
 import torch.nn as nn
 import MTCNN_Version_2.Nets as Nets
 import matplotlib.pyplot as plt
 import os
+from tqdm.autonotebook import tqdm
 
 
 class Trainer:
@@ -18,15 +19,18 @@ class Trainer:
         self.optimizer = Adam(self.net.parameters())
         self.loss_confidence = nn.BCELoss()
         self.loss_offset = nn.MSELoss()
+        self.model_path = "./Weights"
 
     def train(self, net_name, stop_value):
-        if os.path.exists("./TrainedNet/{}.pth".format(net_name)):
-            self.net.load_state_dict(torch.load("./TrainedNet/{}.pth".format(net_name), map_location="cpu"))
+        global loss_landmarks
+        if os.path.exists("./Weights/{}.pth".format(net_name)):
+            self.net.load_state_dict(torch.load("./Weights/{}.pth".format(net_name), map_location="cpu"))
             print("Net_Exits")
         loss = 0
         losses = []
         while True:
-            for i, data in enumerate(self.dataloader):
+            dataloader = tqdm(self.dataloader)
+            for i, data in enumerate(dataloader):
                 img_data, confidence, offsets = data[0].cuda(), data[1].cuda(), data[2].cuda()
                 output_data = self.net(img_data)
                 out_confidence, out_offsets = output_data[0], output_data[1]
@@ -63,18 +67,16 @@ class Trainer:
 
                 losses.append(loss)
                 if self.landmarks:
-                    print("loss_category:{0}---loss_coordinate:{1}---loss_landmarks:{2}---loss:{3}".
-                          format(loss_category, loss_coordinate, loss_landmarks, loss))
+                    dataloader.set_description("loss_category:{:.4f}---loss_coordinate:{:.4f}---loss_landmarks:{:.4f}"
+                                               "---loss:{:.4f}".format(loss_category, loss_coordinate, loss_landmarks, loss))
                 else:
-                    print("loss_category:{0}---loss_coordinate:{1}------loss:{2}".
-                          format(loss_category, loss_coordinate, loss))
-                # plt.clf()
-                # plt.plot(losses)
-                # plt.pause(0.000000000000000000000001)
+                    dataloader.set_description("loss_category:{:.4f}---loss_coordinate:{:.4f}------loss:{:.4f}".
+                                                format(loss_category, loss_coordinate, loss))
+
                 del img_data, confidence, confidence_category, offsets, offsets_coordinate, out_offsets_coordinate, \
                     out_offsets, out_confidence_category, out_confidence, i, loss_category, loss_coordinate, output_data
 
-            torch.save(self.net.state_dict(), "./TrainedNet/{}.pth".format(net_name))
+            torch.save(self.net.state_dict(), "./Weights/{}.pth".format(net_name))
             print("Saved Successfully")
             if loss < stop_value:
                 break

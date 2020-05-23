@@ -1,9 +1,8 @@
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 import numpy as np
 import os
 import torch
 import PIL.Image as Image
-import torchvision.transforms as tran
 
 
 class DatasetFaces(Dataset):
@@ -24,8 +23,7 @@ class DatasetFaces(Dataset):
                                 float(target_split[5])], dtype=torch.float32)  # 偏移率
         img_path = os.path.join(self.path, str(target_split[0]))
         img = torch.tensor(np.array(Image.open(img_path)), dtype=torch.float32).permute(2, 0, 1)
-        img_data = (img/255-0.5)/0.5
-        # img_data = img/255-0.5
+        img_data = (img / 255 - 0.5) / 0.5
         if self.landmarks:
             landmarks = torch.tensor([float(target_split[6]), float(target_split[7]), float(target_split[8]),
                                      float(target_split[9]), float(target_split[10]), float(target_split[11]),

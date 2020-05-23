@@ -14,9 +14,9 @@ import Nets
 """
 
 class Detector:
-    PNet_path = r"./TrainedNet/pnet.pth"
-    RNet_path = r"./TrainedNet/rnet.pth"
-    ONet_path = r"./TrainedNet/onet.pth"
+    PNet_path = r"./Weights/pnet.pth"
+    RNet_path = r"./Weights/rnet.pth"
+    ONet_path = r"./Weights/onet.pth"
 
     def __init__(self, P_path=PNet_path, R_path=RNet_path, O_path=ONet_path, isCUDA=True):
         self.pnet = Nets.PNet()
@@ -113,16 +113,10 @@ class Detector:
         oh = _y2 - _y1  # 高
 
         # 反算出原框
-        x1 = (_x1 + offsets[:, 0].reshape(-1, 1)*ow).int()
-        y1 = (_y1 + offsets[:, 1].reshape(-1, 1)*oh).int()
-        x2 = (_x2 + offsets[:, 2].reshape(-1, 1)*ow).int()
-        y2 = (_y2 + offsets[:, 3].reshape(-1, 1)*oh).int()
-
-        # 因为采样时坐标用的是int，但此时置信度为float，因此为将其拼接，将坐标转为float
-        x1 = x1.float()
-        y1 = y1.float()
-        x2 = x2.float()
-        y2 = y2.float()
+        x1 = (_x1 + offsets[:, 0].reshape(-1, 1)*ow)
+        y1 = (_y1 + offsets[:, 1].reshape(-1, 1)*oh)
+        x2 = (_x2 + offsets[:, 2].reshape(-1, 1)*ow)
+        y2 = (_y2 + offsets[:, 3].reshape(-1, 1)*oh)
 
         return torch.cat([x1, y1, x2, y2, confidence], 1)
 
@@ -171,21 +165,22 @@ class Detector:
         # boxes = torch.cat([torch.tensor(x1, dtype=torch.float32), torch.tensor(y1, dtype=torch.float32),
         #                    torch.tensor(x2, dtype=torch.float32), torch.tensor(y2, dtype=torch.float32),
         #                    torch.tensor(cls, dtype=torch.float32)], 1)
+
         boxes = []
         for index in indexes:
             _box = _pnet_boxes[index]
-            _x1 = int(_box[0])
-            _y1 = int(_box[1])
-            _x2 = int(_box[2])
-            _y2 = int(_box[3])
+            _x1 = float(_box[0])
+            _y1 = float(_box[1])
+            _x2 = float(_box[2])
+            _y2 = float(_box[3])
 
             ow = _x2 - _x1
             oh = _y2 - _y1
 
-            x1 = int(_x1 + ow * offsets[index][0])
-            y1 = int(_y1 + oh * offsets[index][1])
-            x2 = int(_x2 + ow * offsets[index][2])
-            y2 = int(_y2 + oh * offsets[index][3])
+            x1 = float(_x1 + ow * offsets[index][0])
+            y1 = float(_y1 + oh * offsets[index][1])
+            x2 = float(_x2 + ow * offsets[index][2])
+            y2 = float(_y2 + oh * offsets[index][3])
             cls = confidence[index][0]
             boxes.append([x1, y1, x2, y2, cls])
 
@@ -195,10 +190,10 @@ class Detector:
         _pic_box = []  # onet输入图片数据集
         _rnet_boxes = Convert_to_square(rnet_boxes)  # 转正方形
         for _box in _rnet_boxes:  # 获得onet输出转为正方形的框坐标
-            _x1 = int(_box[0])
-            _y1 = int(_box[1])
-            _x2 = int(_box[2])
-            _y2 = int(_box[3])
+            _x1 = float(_box[0])
+            _y1 = float(_box[1])
+            _x2 = float(_box[2])
+            _y2 = float(_box[3])
 
             img = image.crop((_x1, _y1, _x2, _y2))  # 将原图上裁剪下rnet输出框
             img = img.resize((48, 48))  # 缩放为onet输入图片尺寸48*48
@@ -219,30 +214,30 @@ class Detector:
 
         for index in indexes:
             _box = _rnet_boxes[index]
-            _x1 = int(_box[0])
-            _y1 = int(_box[1])
-            _x2 = int(_box[2])
-            _y2 = int(_box[3])
+            _x1 = float(_box[0])
+            _y1 = float(_box[1])
+            _x2 = float(_box[2])
+            _y2 = float(_box[3])
 
             ow = _x2 - _x1
             oh = _y2 - _y1
 
-            x1 = int(_x1 + ow * offsets[index][0])
-            y1 = int(_y1 + oh * offsets[index][1])
-            x2 = int(_x2 + ow * offsets[index][2])
-            y2 = int(_y2 + oh * offsets[index][3])
+            x1 = float(_x1 + ow * offsets[index][0])
+            y1 = float(_y1 + oh * offsets[index][1])
+            x2 = float(_x2 + ow * offsets[index][2])
+            y2 = float(_y2 + oh * offsets[index][3])
 
             # 反算出landmarks
-            px1 = int(_x1 + ow * landmarks_offsets[index][0])
-            py1 = int(_y1 + oh * landmarks_offsets[index][1])
-            px2 = int(_x1 + ow * landmarks_offsets[index][2])
-            py2 = int(_y1 + oh * landmarks_offsets[index][3])
-            px3 = int(_x1 + ow * landmarks_offsets[index][4])
-            py3 = int(_y1 + oh * landmarks_offsets[index][5])
-            px4 = int(_x1 + ow * landmarks_offsets[index][6])
-            py4 = int(_y1 + oh * landmarks_offsets[index][7])
-            px5 = int(_x1 + ow * landmarks_offsets[index][8])
-            py5 = int(_y1 + oh * landmarks_offsets[index][9])
+            px1 = float(_x1 + ow * landmarks_offsets[index][0])
+            py1 = float(_y1 + oh * landmarks_offsets[index][1])
+            px2 = float(_x1 + ow * landmarks_offsets[index][2])
+            py2 = float(_y1 + oh * landmarks_offsets[index][3])
+            px3 = float(_x1 + ow * landmarks_offsets[index][4])
+            py3 = float(_y1 + oh * landmarks_offsets[index][5])
+            px4 = float(_x1 + ow * landmarks_offsets[index][6])
+            py4 = float(_y1 + oh * landmarks_offsets[index][7])
+            px5 = float(_x1 + ow * landmarks_offsets[index][8])
+            py5 = float(_y1 + oh * landmarks_offsets[index][9])
 
             cls = confidence[index][0]
 
@@ -262,22 +257,22 @@ if __name__ == "__main__":
         boxes = detector.detect(img)
 
         for box in boxes:
-            x1 = int(box[0])
-            y1 = int(box[1])
-            x2 = int(box[2])
-            y2 = int(box[3])
+            x1 = float(box[0])
+            y1 = float(box[1])
+            x2 = float(box[2])
+            y2 = float(box[3])
             cv2.rectangle(image, (x1, y1), (x2, y2), color=(0, 0, 255), thickness=3)
 
-            px1 = int(box[4])
-            py1 = int(box[5])
-            px2 = int(box[6])
-            py2 = int(box[7])
-            px3 = int(box[8])
-            py3 = int(box[9])
-            px4 = int(box[10])
-            py4 = int(box[11])
-            px5 = int(box[12])
-            py5 = int(box[13])
+            px1 = float(box[4])
+            py1 = float(box[5])
+            px2 = float(box[6])
+            py2 = float(box[7])
+            px3 = float(box[8])
+            py3 = float(box[9])
+            px4 = float(box[10])
+            py4 = float(box[11])
+            px5 = float(box[12])
+            py5 = float(box[13])
 
             for point in [(px1, py1), (px2, py2), (px3, py3), (px4, py4), (px5, py5)]:
                 cv2.line(image, (point[0]-4, point[1]), (point[0]+4, point[1]), color=(0, 255, 255), thickness=2)
