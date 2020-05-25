@@ -42,6 +42,7 @@ def NMS(boxes, threshold, isMin = False):
 
     return np.stack(r_box)
 
+
 def Convert_to_square(bbox):
     square_bbox = bbox.copy()
     if bbox.shape[0] == 0:

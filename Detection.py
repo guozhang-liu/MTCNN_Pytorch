@@ -71,7 +71,7 @@ class Detector:
         return onet_boxes
 
     def pnet_detection(self, img):
-        scale = 0.7  # 第一张图尺寸为原图尺寸
+        scale = 0.709  # 第一张图尺寸为原图尺寸
         Boxes = []
         w, h = img.size
         img = img.resize((int(scale*w), int(scale*h)))  # 抛弃图像金字塔第一张
